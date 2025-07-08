@@ -1,0 +1,1 @@
+# Wordpress deployment via Terraform 
