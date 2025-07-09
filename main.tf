@@ -75,7 +75,7 @@ resource "aws_security_group" "Wordpress_SG" {
   }
 
   egress {
-    description = "Allow all outbound"
+    description      = "Allow all outbound"
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
@@ -87,4 +87,35 @@ resource "aws_security_group" "Wordpress_SG" {
     Name = "Wordpress-sg"
   }
 }
+
 #######################################################
+resource "tls_private_key" "rsa" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "Wordpress_KEY" {
+  key_name = "wordpress_key"
+  public_key = tls_private_key.rsa.public_key_openssh
+}
+
+resource "local_file" "privatepem_file" {
+  content = tls_private_key.rsa.private_key_pem
+  filename = "wordpress_key.pem"
+}
+
+#######################################################
+
+resource "aws_instance" "name" {
+  ami                         = "ami-044415bb13eee2391"
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.Wordpress_subnet_1.id
+  vpc_security_group_ids      = [aws_security_group.Wordpress_SG.id]
+  key_name                    = aws_key_pair.Wordpress_KEY.key_name
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "Ec2"
+  }
+  user_data = file("${path.module}/script.sh")
+}
