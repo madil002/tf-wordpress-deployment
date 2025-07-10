@@ -4,6 +4,14 @@ terraform {
       source  = "hashicorp/aws"
       version = "6.2.0"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "4.1.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "2.5.3"
+    }
   }
 }
 
@@ -95,12 +103,12 @@ resource "tls_private_key" "rsa" {
 }
 
 resource "aws_key_pair" "Wordpress_KEY" {
-  key_name = "wordpress_key"
+  key_name   = "wordpress_key"
   public_key = tls_private_key.rsa.public_key_openssh
 }
 
 resource "local_file" "privatepem_file" {
-  content = tls_private_key.rsa.private_key_pem
+  content  = tls_private_key.rsa.private_key_pem
   filename = "wordpress_key.pem"
 }
 
