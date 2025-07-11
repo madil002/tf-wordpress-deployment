@@ -127,3 +127,9 @@ resource "aws_instance" "name" {
   }
   user_data = file("${path.module}/script.sh")
 }
+
+#######################################################
+
+output "instance_ip" {
+  value = aws_instance.name.public_ip
+}
