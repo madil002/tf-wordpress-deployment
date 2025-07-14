@@ -1,22 +1,24 @@
 # 🚀 WordPress deployment via Terraform 
 
 ## Project Overview
-This project provisions a WordPress-ready EC2 instance in AWS using Terraform. It automatically sets up networking, SSH keys, security groups, and uses a user data script to bootstrap the EC2 instance on launch. The script installs all necessary software on a fresh Ubuntu instance  — including NGINX, MySQL, PHP, and WordPress.
+This project provisions a fully functional, WordPress-ready EC2 instance in AWS using Terraform. It automatically sets up networking, SSH keys, security groups, and uses a user data script to bootstrap the EC2 instance at launch.
 
->**Note**: WordPress is installed manually via the web interface after the infrastructure is provisioned.
+On a fresh Ubuntu instance, the script installs and configures NGINX, MySQL, PHP, and WordPress. It also sets up the MySQL database, creates the necessary user and permissions, downloads WordPress, and pre-configures the wp-config.php file, making the environment immediately ready to serve WordPress — all with a single command
+
 
 ## 📚 Table of Contents
 1. [Project Overview](#project-overview)  
-2. [Prerequisites](#Prerequisites)
-3. [Project Structure](#Project-Structure)
-4. [Installation](#Installation)
-5. [How it Works](#how-it-works)
+2. [Prerequisites](#-prerequisites)
+3. [Project Structure](#-project-structure)
+4. [Installation](#-installation)
+5. [How it Works](#-how-it-works)
     - [Key Pair Generation](#1-key-pair-generation)
     - [Networking Setup](#2-networking-setup)
     - [Security Group Rules](#3-security-group-rules)
     - [EC2 Instance Deployment](#4-ec2-instance-deployment)
     - [Bootstrapping with User Data](#5-bootstrapping-with-user-data)
     - [Access and Manual WordPress Setup](#6-access-and-manual-wordpress-setup)
+6. [Final Thoughts & Improvements](#-final-thoughts--improvements)
 
 ## 🧪 Prerequisites
 * Terraform installed: [Install Guide](https://developer.hashicorp.com/terraform/install)
@@ -69,6 +71,12 @@ This command initialises the backend and downloads required providers:
     terraform output instance_ip
     ```
      ![Console output](images/ip_output.png)
+
+6. **Cleanup:**
+    Avoid incurring charges by destroying the infrastructure when no longer needed:
+    ```bash
+    terraform destroy
+    ```
 
 ## 🧠 How It Works
 ### 1. Key Pair Generation
@@ -225,3 +233,13 @@ mysql -e "FLUSH PRIVILEGES;"
 * You can visit the instance in a browser to finish the WordPress installation manually via its web interface.
 
 ![WordPress installation](images/wp_installation_2.png)
+
+## 🧩 Final Thoughts & Improvements
+This project provides a solid foundation for deploying a WordPress server using Terraform and demonstrates key concepts in infrastructure as code: provisioning, networking, key management, automation, and configuration bootstrapping.
+
+However, there are several ways this project can be improved for better **security**, **maintainability**, and **production-readiness:**
+* **Use Secure Secrets Management:** Avoid hardcoding sensitive data (like database passwords) in scripts. Instead, integrate with services like AWS Secrets Manager.
+* **Lock Down SSH Access:** Restrict SSH ingress to specific IPs or corporate ranges.
+* **Parameterise the AMI:** Use a data block to dynamically fetch the latest Ubuntu AMI, increasing flexibility and reducing the risk of outdated images.
+* **Improve Key Handling:** Store the SSH key securely and optionally generate it externally to avoid local file management.
+* **Enable HTTPS:** Add SSL/TLS support using Let's Encrypt or AWS ACM for secure access.
