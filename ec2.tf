@@ -1,4 +1,4 @@
-resource "aws_instance" "name" {
+resource "aws_instance" "wordpress_instance" {
   ami                         = "ami-044415bb13eee2391"
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.Wordpress_subnet_1.id
